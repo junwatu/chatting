@@ -1,0 +1,73 @@
+extends layout
+block append head
+	script(type='text/javascript', src='/socket.io/socket.io.js')
+	script(type='text/javascript', src='/javascripts/chat.js')
+block navbar
+	.navbar.navbar-inverse.navbar-fixed-top#bawahNavbar
+		.navbar-inner
+			.container
+				button(data-toggle="collapse" data-target=".nav-collapse").btn.btn-navbar
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				a(href="").brand Chatting Room
+				.nav-collapse.collapse
+					ul.nav.pull-right
+						li
+							a(href="") 
+								i.icon-bookmark
+								not D4 Lanjut Jenjang Teknik Informatika
+						ul.nav.pull-right
+						li
+							a(href="") 
+								i.icon-user
+								not Muhammad Adib Dzulfikar
+block main
+	div.modal.hide.fade#modal
+		div.modal-header
+			button(type='button', class='close', data-dismiss='modal', aria-hidden='true'): not &times;
+			h3 Please input your nickname ;]
+		div.modal-body
+			input(class='xxlarge', type='text', placeholder='Your nickname', id='nickname')
+		div.modal-footer
+			button(type='button', class='btn btn-primary', id='setname'): not Submit
+
+	.main: .container: .row
+		.span12
+			.widget.stacked
+				.widget-header
+					h3 Awesome Chat Application
+				.widget-content
+					div.hero-unit
+						div.page-header
+							h1 Welcome to    
+								small adib's    
+									i.icon-comment    room
+						hr
+						div#messages
+					.input-append
+						input(type="text", placeholder="Your Message").input-xxlarge#message
+block extra
+	.extra: .container: .row
+		.span3
+			h4 About
+			ul 
+				li: a(href="#") About Us
+				li: a(href="#") Twitter
+				li: a(href="#") Facebook
+				li: a(href="#") Google+
+		.span3
+			h4 Link
+			ul 
+				li: a(href="#") Institute Teknologi Surabaya
+				li: a(href="#") Politeknik Elektronika Negeri Surabaya
+				li: a(href="#") Politeknik Perkapalan Negeri Surabaya
+				li: a(href="#") Pendidikan
+				li: a(href="#") Akademik
+block footer
+	.footer: .container
+		.row
+			#footer-copyright.span6 &copy 2013 | CSS By 
+				a(href="#") Bootstrap Twitter
+				z -Theme by 
+				a(href="#") Jumpstart UI
