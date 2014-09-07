@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var debug = require('debug')('apps');
 var io = require('socket.io');
-var socketHandshake = require('socket.io-handshake');
+//var socketHandshake = require('socket.io-handshake');
 var reqSocket = require('./routes/socket.js');
 
 var routes = require('./routes/index');
@@ -28,7 +28,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser('verysecretkey'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({store: sessionStore, key:'sid', secret: 'verysecretkey'}));
+
+var sessionConfig = {
+    store: sessionStore, 
+    key:'sid',
+    secret:'verysecretkey', 
+    parser:cookieParser()
+};
+
+var sessionMiddleware = session(sessionConfig);
+
+app.use(sessionMiddleware);
 
 app.locals.pretty = true;
 
@@ -64,17 +74,16 @@ var server = app.listen(app.get('port'), function() {
 });
 
 io = io.listen(server);
-io.use(socketHandshake({
-    store: sessionStore, 
-    key:'sid',
-    secret:'verysecretkey', 
-    parser:cookieParser()
-}));
-reqSocket.initialize(io);
-    /*var chatInfra =  io.of('/chat_infra').on('connection', function(socket) {
+io.use(function(socket, next){
+    sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+//reqSocket.initialize(io);
+
+var chatInfra =  io.of('/chat_infra');
+chatInfra.on('connection', function(socket) {
         socket.on('set_name', function(data) {
-            socket.handshake.session.name = data.name;
-            socket.handshake.session.save();
+            socket.request.session.name = data.name;
             socket.emit('name_set', data);
             socket.send(JSON.stringify({
                 type: 'serverMessage',
@@ -89,16 +98,17 @@ reqSocket.initialize(io);
         });
     });
 
-    var chatCom = io.of('/chat_com').on('connection', function(socket) {
+var chatCom = io.of('/chat_com');
+chatCom.on('connection', function(socket) {
         socket.on('message', function(message) {
             message = JSON.parse(message);  
             if(message.type == 'userMessage') {
-                message.username = socket.handshake.session.name;
+                message.username = socket.request.session.name;
                 socket.broadcast.send(JSON.stringify(message));
                 message.type = 'myMessage';
                 socket.send(JSON.stringify(message))
             }
         });
-    });*/
+    });
 
 //module.exports = app;
